@@ -58,6 +58,19 @@
 
 ##  Estructura del proyecto
 
+```bash
+├── public/
+│   └── optimized.wasm        # módulo WASM compilado
+├── src/
+│   ├── assembly/             # código AssemblyScript
+│   │   ├── index.ts
+│   │   └── tsconfig.json     # para el editor
+│   ├── ImageEditor.jsx       # componente principal React
+│   └── App.css               # estilos del editor
+├── asconfig.json             # config para AssemblyScript
+├── package.json
+└── README.md
+``` 
 ├── public/
 │   └── optimized.wasm        # módulo WASM compilado
 ├── src/
@@ -110,7 +123,7 @@
 - José Gómez
 - Frontend Developer
 
-[LinkedIn](www.linkedin.com/in/jose-gomez-dev)
+[LinkedIn](https://www.linkedin.com/in/jose-gomez-dev)
 
 ### Licencia
 
