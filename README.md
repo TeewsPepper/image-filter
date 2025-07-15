@@ -4,9 +4,48 @@
 ![WASM](https://img.shields.io/badge/WebAssembly-optimizado-blueviolet)
 ![Made with React](https://img.shields.io/badge/Hecho%20con-React-blue)
 
-- Este proyecto es una aplicación web para aplicar filtros de imagen utilizando WebAssembly (WASM) con código fuente en AssemblyScript y una interfaz en React.
 
-- Permite cargar imágenes, aplicar filtros como escala de grises, sepia, inversión, blur, sharpen. Incluye además una opción para restablecer la imagen original.
+## 🔗 Demo en vivo
+
+- Podés probar la app funcionando aquí:
+ [https://edit-images.netlify.app](https://edit-images.netlify.app)
+
+Este proyecto es una **prueba técnica para explorar los beneficios de WebAssembly (WASM)** en la manipulación de imágenes dentro del navegador.
+Permite aplicar filtros como escala de grises, sepia, blur, invert y sharpen a imágenes cargadas por el usuario. Los filtros están escritos en AssemblyScript y compilados a WebAssembly, lo que permite ejecutar la lógica de procesamiento en una capa de alto rendimiento independiente del hilo principal de JavaScript.
+
+El objetivo es comparar este enfoque con una solución tradicional en JavaScript puro, poniendo a prueba ventajas como:
+
+-  Menor bloqueo de la UI durante operaciones pesadas
+-  Procesamiento más veloz en imágenes grandes
+-  Separación clara entre lógica de negocio y presentación
+
+Además, incorpora una interfaz moderna con React y proximamente se agregará un control de intensidad de filtro para demostrar cómo WASM puede integrarse fácilmente en entornos frontend actuales.
+
+##  Benchmark JS vs WASM
+
+ **Objetivo** – medir la diferencia de rendimiento entre la versión JavaScript pura  y la versión WebAssembly (AssemblyScript) aplicando tres filtros a una imagen de **4000 × 6000 px** (~24 MP).
+
+ ```bash
+|  Filtro   | JS min | JS max | JS avg   | WASM min   | WASM max   |   WASM avg   |   Mejora    |
+|-----------|-------:|-------:|---------:|-----------:|-----------:|-------------:|------------:|
+| grayscale | 160 ms | 269 ms | 189.4 ms | **112 ms** | **131 ms** | **118.6 ms** | **+37.4 %** |
+| invert    | 165 ms | 268 ms | 185.8 ms | **109 ms** | **180 ms** | **125.2 ms** | **+32.6 %** |
+| sepia     | 215 ms | 340 ms | 238.5 ms | **162 ms** | **237 ms** | **185.9 ms** | **+22.1 %** |
+```
+
+## ¿Por qué la mejora no es “mágica” al 100 %?
+
+1. **Copia de memoria**  
+   - El navegador entrega los píxeles del `canvas` como `ImageData`.  
+   - Para procesarlos en WASM hay que copiarlos al heap WebAssembly, y luego volver a copiarlos a JS.  
+   - Ese traslado cuesta decenas de milisegundos, sea cual sea la lógica del filtro.
+
+2. **Trabajo real vs. coste fijo**  
+   - Si el filtro hace poco cálculo (p.ej. `invert`, que son 3 restas), la copia puede representar la mitad del tiempo total.  
+   - Cuanto **más pesada** es la operación, más se amortiza la copia y **mejor luce WASM** (blur, convoluciones grandes, compresión, etc.).
+
+3. **Compilación JIT de JS**  
+   - Tras 1‑2 ejecuciones el motor JS optimiza los bucles; la versión WASM está “caliente” desde el inicio, pero el gap se cierra algo después del warm‑up.
 
 ---
 
@@ -19,42 +58,63 @@
 
 ---
 
-##  Instalación
+##  Instalar y reproducir medición
 
 1. **Clona el repositorio**
-2. **Ve al directorio**
-3. **Instala dependencias**
-4. **Compila el módulo WASM**
-
 ```bash
     git clone https://github.com/teewspepper/edit-images.git
-    cd edit-images
-    npm install
-    npm run asbuild
-
 ``` 
+
+2. **Ve al directorio**
+```bash
+    cd edit-images
+```
+
+3. **Instala dependencias**
+```bash
+    npm install
+```
+
+4. **Compila el módulo WASM**
+```bash
+    npm run asbuild
+```
+
 - Asegúrate de tener AssemblyScript ≥ 0.27 instalado. Si no:
     
 ```bash
     npm install --save-dev assemblyscript@latest
 ```   
     
- 5. **Inicia el servidor de desarrollo**
+ 5. **Inicia el servidor local**
 
 ```bash
     npm run dev
 ```
- 
-- Abre http://localhost:5173 en tu navegador.
-
 
 ##  Uso
+ 
+1. Abre http://localhost:5173 en tu navegador.
+2. Abre DevTools → Console (F12 en Firefox/Chrome).
+3. Ejecuta el benchmark
 
-- Clic en “Elegir archivo” para subir una imagen.
-- Ajusta el nivel de intensidad del filtro con el slider.
-- Selecciona un filtro: Grayscale, Sepia, Invert, Blur, Sharpen.
-- Clic en “Restablecer” para volver a la imagen original.
 
+```javascript
+// WASM activado (checkbox “Usar WASM” marcado)
+await benchmarkComparison("grayscale", 10);
+
+// Desmarca “Usar WASM” (modo JS puro) y vuelve a correr:
+await benchmarkComparison("grayscale", 10);
+
+```
+
+- La función benchmarkComparison (expuesta a window en modo dev) repetirá el filtro 10 veces.
+- Calculará min, max, avg y mostrará una tabla como la del README.
+
+Repite con "invert" y "sepia" para comparar.
+
+Nota – la primera corrida siempre es más lenta (warm‑up).
+El script descarta ese efecto al promediar 10 repeticiones.
 
 ##  Estructura del proyecto
 
@@ -92,7 +152,6 @@
 ##  Scripts útiles
 
 ```bash
-    npm run dev        # inicia servidor local
     npm run asbuild    # compila WASM desde src/assembly/index.ts
 ``` 
 
@@ -116,6 +175,15 @@
 ### Licencia
 
 Este proyecto se distribuye bajo la licencia [MIT](LICENSE).
+
+
+
+
+
+
+
+
+
 
 
 
