@@ -1,0 +1,10 @@
+{
+  "entries": ["src/assembly/index.ts"],
+  "targets": {
+    "release": {
+      "runtime": "stub",
+      "exportMemory": true,
+      "outFile": "public/optimized.wasm"
+    }
+  }
+}
