@@ -8,7 +8,9 @@
 ## 🔗 Demo en vivo
 
 - Podés probar la app funcionando aquí:
- [https://edit-images.netlify.app](https://edit-images.netlify.app)
+ [https://image-editor-wasm.netlify.app](https://image-editor-wasm.netlify.app)
+
+
 
 Este proyecto es una **prueba técnica para explorar los beneficios de WebAssembly (WASM)** en la manipulación de imágenes dentro del navegador.
 Permite aplicar filtros como escala de grises, sepia, blur, invert y sharpen a imágenes cargadas por el usuario. Los filtros están escritos en AssemblyScript y compilados a WebAssembly, lo que permite ejecutar la lógica de procesamiento en una capa de alto rendimiento independiente del hilo principal de JavaScript.
@@ -102,6 +104,8 @@ Además, incorpora una interfaz moderna con React y proximamente se agregará un
 ```javascript
 // Ejecuta ambas mediciones (WASM y JS) de una sola vez
 await benchmarkComparison("grayscale", 10);
+await benchmarkComparison("sepia", 10);
+await benchmarkComparison("invert", 10);
 
 ```
 
