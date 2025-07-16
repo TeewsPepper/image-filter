@@ -134,7 +134,6 @@ El script descarta ese efecto al promediar 10 repeticiones.
 - Filtros de imagen en tiempo real
 - Carga local de imágenes
 - Procesamiento con WebAssembly
-- Intensidad ajustable por slider
 - Restablecer imagen original
 - Interfaz responsive y accesible
 
