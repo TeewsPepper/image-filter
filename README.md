@@ -100,10 +100,7 @@ Además, incorpora una interfaz moderna con React y proximamente se agregará un
 
 
 ```javascript
-// WASM activado (checkbox “Usar WASM” marcado)
-await benchmarkComparison("grayscale", 10);
-
-// Desmarca “Usar WASM” (modo JS puro) y vuelve a correr:
+// Ejecuta ambas mediciones (WASM y JS) de una sola vez
 await benchmarkComparison("grayscale", 10);
 
 ```
